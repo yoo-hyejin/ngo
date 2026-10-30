@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NGO 사업기획자 진로 탐색</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { font-family: 'Pretendard', sans-serif; background-color: #f8fafc; }
+        .fade-in { animation: fadeIn 0.4s ease-in-out; }
+        .slide-up { animation: slideUp 0.5s ease-out forwards; }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .glass {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .timeline-line::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 24px;
+            width: 2px;
+            background: #e2e8f0;
+            z-index: 0;
+        }
+        @media (min-width: 768px) {
+            .timeline-line::before { left: 50%; transform: translateX(-50%); }
+            .timeline-item:nth-child(even) { flex-direction: row-reverse; }
+            .timeline-item:nth-child(odd) .timeline-content { text-align: right; padding-right: 3rem; padding-left: 0; }
+            .timeline-item:nth-child(even) .timeline-content { text-align: left; padding-left: 3rem; padding-right: 0; }
+        }
+    </style>
+</head>
+<body class="text-slate-800 antialiased overflow-x-hidden">
+
+    <!-- Header -->
+    <header class="bg-white shadow-sm sticky top-0 z-40">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row justify-between items-center py-4">
+                <div class="flex items-center gap-3 mb-4 md:mb-0">
+                    <div class="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center text-white shadow-lg">
+                        <i class="fa-solid fa-earth-americas text-xl"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-xl font-bold text-slate-900">NGO 사업기획자 진로 탐색</h1>
+                        <p class="text-xs text-slate-500 font-medium">고등학생을 위한 맞춤형 세부 직업 안내서</p>
+                    </div>
+                </div>
+                
+                <!-- Navigation Tabs -->
+                <nav class="flex space-x-1 bg-slate-100 p-1 rounded-xl">
+                    <button onclick="switchTab('explore')" id="tab-explore" class="tab-btn px-4 py-2 text-sm font-semibold rounded-lg bg-white text-indigo-600 shadow-sm transition-all">직업 탐색</button>
+                    <button onclick="switchTab('compare')" id="tab-compare" class="tab-btn px-4 py-2 text-sm font-semibold rounded-lg text-slate-600 hover:text-slate-900 transition-all">직무 비교</button>
+                    <button onclick="switchTab('roadmap')" id="tab-roadmap" class="tab-btn px-4 py-2 text-sm font-semibold rounded-lg text-slate-600 hover:text-slate-900 transition-all">진로 로드맵</button>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 min-h-screen">
+        
+        <!-- SECTION 1: Explore (직업 탐색) -->
+        <section id="sec-explore" class="fade-in">
+            <div class="mb-8 text-center md:text-left">
+                <h2 class="text-2xl font-bold text-slate-900">세부 직업 탐색</h2>
+                <p class="text-slate-600 mt-2">관심 있는 NGO 분야의 직업 카드를 클릭하여 상세 정보와 생기부 연계 팁을 확인하세요.</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6" id="job-cards-container">
+                <!-- Cards will be injected by JS -->
+            </div>
+        </section>
+
+        <!-- SECTION 2: Compare (직무 비교) -->
+        <section id="sec-compare" class="hidden fade-in">
+            <div class="mb-8 text-center">
+                <h2 class="text-2xl font-bold text-slate-900">직무 및 역량 비교</h2>
+                <p class="text-slate-600 mt-2">두 가지 세부 직업을 선택하여 공통점과 차이점을 비교해 보세요.</p>
+            </div>
+            
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 mb-8">
+                <div class="flex flex-col md:flex-row items-center justify-center gap-4">
+                    <select id="compare-1" class="w-full md:w-64 p-3 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-slate-50 font-medium" onchange="renderComparison()">
+                        <option value="">첫 번째 직업 선택</option>
+                    </select>
+                    <div class="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-400">
+                        <i class="fa-solid fa-code-compare"></i>
+                    </div>
+                    <select id="compare-2" class="w-full md:w-64 p-3 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-slate-50 font-medium" onchange="renderComparison()">
+                        <option value="">두 번째 직업 선택</option>
+                    </select>
+                </div>
+            </div>
+
+            <div id="comparison-result" class="hidden">
+                <!-- Common section -->
+                <div class="bg-indigo-50 rounded-2xl p-6 mb-6 border border-indigo-100">
+                    <h3 class="text-lg font-bold text-indigo-800 mb-3 flex items-center gap-2"><i class="fa-solid fa-link"></i> NGO 기획자로서의 공통점</h3>
+                    <p class="text-indigo-900 text-sm leading-relaxed">
+                        선택한 두 직업 모두 <strong>사회적 가치 창출과 문제 해결</strong>을 궁극적인 목표로 합니다. 특정 이슈에 대한 리서치 능력, 이해관계자(정부, 시민, 파트너 기관 등)와의 <strong>원활한 커뮤니케이션 및 협업 능력</strong>, 그리고 한정된 자원으로 최대의 효과를 내기 위한 <strong>프로젝트 기획 및 예산 관리 역량</strong>이 공통적으로 필수 요구됩니다.
+                    </p>
+                </div>
+
+                <!-- Difference section -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="comparison-details">
+                    <!-- Details injected by JS -->
+                </div>
+
+                <!-- Visualization Chart section -->
+                <div id="comparison-chart" class="mt-6 bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+                    <!-- Chart injected by JS -->
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 3: Roadmap (진로 로드맵) -->
+        <section id="sec-roadmap" class="hidden fade-in">
+            <div class="mb-8 text-center">
+                <h2 class="text-2xl font-bold text-slate-900">진로 준비 인포그래픽</h2>
+                <p class="text-slate-600 mt-2">최종 목표로 하는 직업을 선택하면 고등학교부터 실무까지의 로드맵을 보여줍니다.</p>
+            </div>
+
+            <div class="flex justify-center mb-12">
+                <select id="roadmap-select" class="w-full md:w-80 p-3 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white font-medium shadow-sm" onchange="renderRoadmap()">
+                    <option value="">직업을 선택하여 로드맵 보기</option>
+                </select>
+            </div>
+
+            <div id="roadmap-content" class="hidden relative max-w-4xl mx-auto py-10">
+                <!-- Timeline injected by JS -->
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Modal for Job Details -->
+    <div id="job-modal" class="fixed inset-0 z-50 hidden">
+        <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onclick="closeModal()"></div>
+        <div class="absolute inset-0 overflow-y-auto px-4 py-6 sm:py-12">
+            <div class="relative max-w-3xl mx-auto bg-white rounded-3xl shadow-2xl overflow-hidden slide-up">
+                <!-- Modal Header -->
+                <div class="h-32 bg-gradient-to-r from-indigo-500 to-purple-600 flex items-center px-8" id="modal-header-bg">
+                    <button onclick="closeModal()" class="absolute top-4 right-4 text-white/80 hover:text-white bg-white/20 hover:bg-white/40 rounded-full w-8 h-8 flex items-center justify-center transition-colors">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                    <div class="flex items-center gap-4 mt-6">
+                        <div class="w-16 h-16 bg-white rounded-2xl flex items-center justify-center text-3xl shadow-md" id="modal-icon"></div>
+                        <div class="text-white">
+                            <h2 class="text-2xl font-bold" id="modal-title">직업 이름</h2>
+                            <p class="text-white/90 text-sm mt-1" id="modal-subtitle">한줄 설명</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Modal Body -->
+                <div class="p-8 space-y-8 bg-slate-50">
+                    <!-- Task & Example -->
+                    <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100">
+                        <h3 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
+                            <i class="fa-solid fa-list-check text-indigo-500"></i> 직무 및 실무 사례
+                        </h3>
+                        <div class="space-y-3" id="modal-tasks"></div>
+                        <div class="mt-4 p-4 bg-indigo-50 rounded-xl border border-indigo-100">
+                            <span class="text-xs font-bold text-indigo-600 bg-indigo-100 px-2 py-1 rounded-md mb-2 inline-block">대표 실무 사례</span>
+                            <p class="text-sm text-indigo-900" id="modal-example"></p>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Education -->
+                        <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100">
+                            <h3 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
+                                <i class="fa-solid fa-graduation-cap text-indigo-500"></i> 대학 전공 & 고교 과목
+                            </h3>
+                            <div>
+                                <p class="text-xs font-bold text-slate-400 mb-2">관련 대학 전공 <span class="text-indigo-400 font-normal">(클릭시 추천 대학 확인)</span></p>
+                                <div class="flex flex-wrap gap-2" id="modal-majors"></div>
+                                
+                                <!-- 대학 추천 컨테이너 추가 -->
+                                <div id="uni-recommendation-container" class="hidden mt-3 p-3 bg-indigo-50/70 rounded-xl border border-indigo-100">
+                                    <p class="text-xs font-bold text-indigo-600 mb-1.5 flex items-center gap-1">
+                                        <i class="fa-solid fa-building-columns"></i> <span id="uni-recommendation-title"></span>
+                                    </p>
+                                    <p class="text-sm text-slate-700 leading-relaxed" id="uni-recommendation-list"></p>
+                                </div>
+                            </div>
+                            <div class="mt-5">
+                                <p class="text-xs font-bold text-slate-400 mb-2">고교 권장 선택 과목</p>
+                                <div class="flex flex-wrap gap-2" id="modal-electives"></div>
+                            </div>
+                        </div>
+
+                        <!-- Competencies -->
+                        <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100">
+                            <h3 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
+                                <i class="fa-solid fa-star text-indigo-500"></i> 핵심 필요 역량
+                            </h3>
+                            <ul class="space-y-3" id="modal-competencies"></ul>
+                        </div>
+                    </div>
+
+                    <!-- School Projects -->
+                    <div class="bg-gradient-to-br from-indigo-900 to-slate-800 rounded-2xl p-6 shadow-lg text-white">
+                        <h3 class="text-lg font-bold mb-4 flex items-center gap-2">
+                            <i class="fa-solid fa-book-open-reader text-indigo-300"></i> 생기부 연계 탐구 프로젝트 추천
+                        </h3>
+                        <p class="text-sm text-slate-300 mb-4">고등학교 교과 활동이나 동아리에서 시도해 볼 수 있는 탐구 주제입니다.</p>
+                        <div class="space-y-3" id="modal-projects"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script>
+        // Data structure
+        const jobs = [
+            {
+                id: 'dev',
+                name: '국제개발협력 전문가',
+                icon: 'fa-earth-africa',
+                color: 'blue',
+                gradient: 'from-blue-500 to-indigo-600',
+                desc: '개발도상국의 빈곤 퇴치와 지속가능한 발전을 지원합니다.',
+                tasks: ['현지 수요 조사 및 원조 사업 타당성 분석', 'ODA(공적개발원조) 사업 제안서 기획 및 작성', '해외 현지 파트너 및 정부 기관과의 협력 및 모니터링'],
+                example: '탄자니아 농업 기술 교육 센터 건립을 통한 지역주민 자립 역량 강화 프로젝트 기획',
+                majors: ['국제개발협력학', '국제관계학', '정치외교학', '사회학'],
+                electives: ['세계지리', '세계사', '정치와 법', '사회·문화', '영어회화'],
+                competencies: [
+                    { title: '문화적 다양성 이해 및 글로벌 감각', desc: '사례: 파견 국가의 종교적/문화적 금기를 미리 파악하여 현지 주민들이 거부감 없이 참여할 수 있는 교육 프로그램을 기획함.' },
+                    { title: '뛰어난 외국어 소통 능력', desc: '사례: 영어 및 현지어로 정부 관계자와 협상하고, 글로벌 파트너 기관과 영문 제안서 및 결과 보고서를 원활하게 주고받음.' },
+                    { title: '복잡한 프로젝트 논리 모형(PDM) 작성 및 관리력', desc: '사례: 사업의 투입-활동-산출-결과-목표의 인과관계를 PDM으로 논리적으로 구조화하여 KOICA 자금 지원을 성공적으로 유치함.' }
+                ],
+                stats: { global: 95, planning: 85, comm: 80, analysis: 85, creative: 70 },
+                projects: [
+                    '공정무역 제품 소비가 개발도상국 지역 사회에 미치는 영향 분석',
+                    '국제기구(UN)의 SDGs(지속가능발전목표) 달성 현황 및 한국의 기여 방안 탐구'
+                ],
+                roadmap: [
+                    { step: '고등학교', title: '기초 소양 및 시야 확장', desc: '국제 이슈 탐구 동아리 활동, 외국어(영어/제2외국어) 역량 강화, 모의 UN 참여를 통해 글로벌 감각을 기릅니다.', icon: 'fa-school' },
+                    { step: '대학교', title: '전문 지식 및 현장 경험', desc: '관련 전공 학위 취득, 개발도상국 단기 해외 봉사활동 참여, KOICA ODA 교육원 수강으로 이론과 실무 기초를 다집니다.', icon: 'fa-university' },
+                    { step: '취업 준비', title: '실무 경험 축적', desc: 'KOICA 영프로페셔널(YP) 인턴십 참여, 영어/제2외국어 공인 성적 취득, NGO 단기 프로젝트 보조 요원 활동을 수행합니다.', icon: 'fa-briefcase' },
+                    { step: '실무 활동', title: '프로젝트 매니저', desc: '국제구호개발 NGO에 입사하여 주니어 간사로 현지 지부 파견 또는 본부에서 사업 보조 및 기획을 담당합니다.', icon: 'fa-user-tie' }
+                ]
+            },
+            {
+                id: 'env',
+                name: '환경/기후변화 캠페이너',
+                icon: 'fa-leaf',
+                color: 'emerald',
+                gradient: 'from-emerald-500 to-teal-600',
+                desc: '기후 위기 대응을 위한 대중 캠페인과 정책 변화를 이끕니다.',
+                tasks: ['국내외 환경/기후 이슈 리서치 및 보고서 발간', '시민 참여형 온/오프라인 액션 캠페인 기획', '정부 및 기업 대상 환경 정책 제안 및 압박 옹호 활동'],
+                example: '플라스틱 오염 해결을 위한 다회용기 의무화 서명 운동 및 기업 대상 직접행동 기획',
+                majors: ['환경공학', '환경사회학', '언론정보학', '공공정책학'],
+                electives: ['지구과학Ⅰ·Ⅱ', '생활과 윤리', '사회문제 탐구', '융합과학'],
+                competencies: [
+                    { title: '환경 과학 및 기후 이슈에 대한 깊은 이해', desc: '사례: 최신 IPCC 보고서 등 방대한 데이터를 분석하여 대중이 이해하기 쉬운 카드뉴스로 번역 및 배포함.' },
+                    { title: '대중을 움직이는 설득력 있는 글쓰기와 스피치', desc: '사례: 환경 파괴 현장의 심각성을 담은 성명서를 작성하고, 언론 브리핑에서 효과적으로 발언하여 뉴스 보도를 이끌어냄.' },
+                    { title: '창의적인 대중 동원 및 캠페인 기획력', desc: '사례: 폐플라스틱을 활용한 설치 미술을 기획하고 플래시몹을 연계하여 시민 1만 명의 정책 지지 서명을 단기간에 모음.' }
+                ],
+                stats: { global: 80, planning: 85, comm: 95, analysis: 90, creative: 90 },
+                projects: [
+                    '학교 내 탄소 발자국 현황 조사 및 실질적인 감축 실천 방안 기획',
+                    '국내외 기후변화 대응(RE100 등) 정책 비교 및 개선점 제안 소논문 작성'
+                ],
+                roadmap: [
+                    { step: '고등학교', title: '환경 이슈 체화', desc: '환경 보호 동아리 창설 및 교내 제로웨이스트 캠페인 운영, 기후 관련 다큐멘터리/독서 심층 탐구.', icon: 'fa-school' },
+                    { step: '대학교', title: '전문성 및 연대', desc: '환경 관련 학과/학회 활동, 주요 시민단체의 대학생 서포터즈 활동, 기후 파업 등 연대 활동 참여.', icon: 'fa-university' },
+                    { step: '취업 준비', title: '포트폴리오 구축', desc: '환경 단체 인턴십 수행, 자신만의 관점을 담은 환경 SNS 채널 운영, 미디어 활용 능력 증명.', icon: 'fa-briefcase' },
+                    { step: '실무 활동', title: '이슈 전담 캠페이너', desc: '환경 NGO에 입사하여 특정 이슈(예: 해양보호, 기후에너지, 플라스틱)를 전담하는 액티비스트로 활동.', icon: 'fa-user-tie' }
+                ]
+            },
+            {
+                id: 'human',
+                name: '인권 옹호 활동가',
+                icon: 'fa-scale-balanced',
+                color: 'purple',
+                gradient: 'from-purple-500 to-pink-600',
+                desc: '소외계층의 인권 보호와 차별 철폐 제도를 기획합니다.',
+                tasks: ['인권 침해 사례 현장 조사 및 피해자 구제 지원 활동', '인권 실태 조사 보고서 작성 및 언론 기자회견 기획', '시민 대상 인권 교육 프로그램 개발 및 타 단체와의 연대'],
+                example: '미등록 이주노동자 산재 예방 및 노동 환경 개선을 위한 실태 조사 및 법안 개정 촉구 세미나 개최',
+                majors: ['법학', '사회복지학', '사회학', '여성학/인권학'],
+                electives: ['정치와 법', '생활과 윤리', '윤리와 사상', '사회문제 탐구'],
+                competencies: [
+                    { title: '높은 인권 감수성과 소수자에 대한 공감 능력', desc: '사례: 폭력 피해자와의 심층 면담 시, 2차 가해가 발생하지 않도록 언어와 태도를 각별히 주의하며 깊은 신뢰를 형성함.' },
+                    { title: '법/제도의 허점을 파악하는 비판적 분석력', desc: '사례: 현행법의 사각지대를 분석하여, 실질적인 구제가 가능한 구체적인 법안 개정안을 국회에 제안함.' },
+                    { title: '다양한 단체와 협력하는 연대 조직력', desc: '사례: 지역 사회의 여러 인권, 노동, 여성 단체들을 하나로 모아 공동 대응 연대체를 구성하고 집회를 성공적으로 기획함.' }
+                ],
+                stats: { global: 70, planning: 80, comm: 95, analysis: 95, creative: 75 },
+                projects: [
+                    '청소년 노동 인권(아르바이트 등) 실태 조사 및 교내 보호 교육 캠페인 제안',
+                    '미디어 매체에 나타난 소수자 혐오 표현 양상 분석 및 대안적 가이드라인 제시'
+                ],
+                roadmap: [
+                    { step: '고등학교', title: '인권 의식 함양', desc: '인권 주제의 사회문제 탐구 보고서 작성, 학생회 인권부 활동, 교내 차별 요소 찾아내기.', icon: 'fa-school' },
+                    { step: '대학교', title: '법과 사회 이해', desc: '사회학/법학 전공 심화, 국제앰네스티 등 인권 단체 대학생 네트워크 활동, 인권법 캠프 참여.', icon: 'fa-university' },
+                    { step: '취업 준비', title: '현장 감각 익히기', desc: '국가인권위원회 서포터즈, 시민단체 상근 활동가 수습 과정 참여, 글쓰기/논평 작성 능력 배양.', icon: 'fa-briefcase' },
+                    { step: '실무 활동', title: '인권 상근 활동가', desc: '인권 단체 상근 활동가로 입사하여 여성, 아동, 장애인, 이주민 등 특정 분야 인권 향상 프로젝트 전담.', icon: 'fa-user-tie' }
+                ]
+            },
+            {
+                id: 'fund',
+                name: '모금/마케팅 기획자',
+                icon: 'fa-hand-holding-heart',
+                color: 'rose',
+                gradient: 'from-rose-400 to-red-500',
+                desc: 'NGO 사업 진행을 위한 재원을 마련하고 후원자와 소통합니다.',
+                tasks: ['디지털/오프라인 타겟 맞춤형 모금 캠페인 기획 및 실행', '기업 사회공헌(CSR/ESG) 팀 대상 파트너십 및 후원 제안', '후원자 예우 프로그램 기획 및 투명한 성과 보고 커뮤니케이션'],
+                example: '국내 결식아동 심리치료 지원을 위한 연말 온라인 크라우드펀딩 및 기업 매칭 그랜트 성공적 기획',
+                majors: ['경영학(마케팅)', '광고홍보학', '미디어커뮤니케이션학', '사회복지학'],
+                electives: ['경제', '실용 수학', '심리학', '언어와 매체', '정보'],
+                competencies: [
+                    { title: '퍼포먼스 마케팅 및 후원자 데이터 분석 능력', desc: '사례: SNS 광고 A/B 테스트를 통해 클릭률과 후원 전환율이 가장 높은 광고 소재를 발굴하여 예산 효율을 높임.' },
+                    { title: '디지털 미디어(SNS, 웹) 콘텐츠 기획력', desc: '사례: 특정 기념일(예: 세계 환경의 날)에 맞춘 숏폼 영상 릴레이 캠페인을 기획하여 MZ세대 신규 후원자를 대거 유치함.' },
+                    { title: '후원자의 마음을 움직이는 스토리텔링 능력', desc: '사례: 해외 아동 지원 사업의 필요성을 수치로만 나열하지 않고, 현지 아동의 하루 일과 스토리로 감동적으로 풀어내어 정기 후원을 유도함.' }
+                ],
+                stats: { global: 65, planning: 95, comm: 90, analysis: 85, creative: 95 },
+                projects: [
+                    '교내 축제 수익금 기부를 위한 모금 캠페인 기획 및 마케팅 전략 수립/실행',
+                    '비영리 단체의 디지털 마케팅 및 굿즈 펀딩 성공 사례 분석 및 벤치마킹 보고서'
+                ],
+                roadmap: [
+                    { step: '고등학교', title: '커뮤니케이션 기초', desc: '교내 기부 캠페인 직접 기획, 마케팅/경제 동아리 활동, 간단한 디자인 및 영상 편집 툴 익히기.', icon: 'fa-school' },
+                    { step: '대학교', title: '마케팅 실전 경험', desc: '경영/마케팅/광고 학회 활동, 마케팅 공모전 참여, 크라우드펀딩(텀블벅 등) 실제 소규모 프로젝트 오픈.', icon: 'fa-university' },
+                    { step: '취업 준비', title: '데이터 및 전문성', desc: '데이터 분석 자격증(GA 등) 취득, 영리/비영리 마케팅 인턴십, 비영리 모금전문가 교육 과정 이수.', icon: 'fa-briefcase' },
+                    { step: '실무 활동', title: '펀드레이저', desc: 'NGO 모금/후원관리팀 입사, 디지털 모금 채널 최적화 및 후원자 생애주기 기반 데이터 마케팅 수행.', icon: 'fa-user-tie' }
+                ]
+            }
+        ];
+
+        // Initialization
+        window.onload = () => {
+            renderCards();
+            populateSelects();
+        };
+
+        // 대학 추천 데이터 추가 (서울 소재 주요 대학 위주)
+        const uniRecommendations = {
+            '국제개발협력학': ['이화여대(국제학부)', '한국외대(국제학부)', '경희대(국제학과)', '성공회대(글로벌학부)'],
+            '국제관계학': ['서울대', '연세대', '고려대', '서강대', '한국외대(LD/국제학부)'],
+            '정치외교학': ['서울대', '연세대', '고려대', '서강대', '성균관대', '한양대', '이화여대'],
+            '사회학': ['서울대', '연세대', '고려대', '서강대', '성균관대', '중앙대', '이화여대'],
+            '환경공학': ['서울대(건설환경)', '연세대(사회환경)', '고려대(건축사회환경)', '한양대', '서울시립대', '건국대'],
+            '환경사회학': ['서울대', '연세대(사회/행정)', '고려대(공공사회)', '서울시립대(도시사회)'],
+            '언론정보학': ['서울대', '연세대', '고려대(미디어)', '서강대(지식융합미디어)', '성균관대', '이화여대(커뮤니케이션)'],
+            '공공정책학': ['서울대', '연세대(행정)', '고려대', '성균관대(글로벌리더/행정)', '한양대(정책)'],
+            '법학': ['홍익대', '동국대', '국민대', '숭실대', '숙명여대', '성신여대'],
+            '사회복지학': ['서울대', '연세대', '이화여대', '중앙대', '성균관대', '숭실대', '서울여대'],
+            '여성학/인권학': ['이화여대(여성학 연계전공)', '숙명여대(여성학 연계전공)', '성공회대', '서울대(협동과정)'],
+            '경영학(마케팅)': ['서울대', '연세대', '고려대', '서강대', '성균관대', '한양대', '중앙대'],
+            '광고홍보학': ['중앙대', '동국대', '국민대', '홍익대', '숙명여대'],
+            '미디어커뮤니케이션학': ['서울대(언론정보)', '연세대(언론홍보)', '고려대(미디어)', '서강대', '중앙대', '경희대']
+        };
+
+        // Tab Switching Logic
+        function switchTab(tabId) {
+            // Update buttons
+            ['explore', 'compare', 'roadmap'].forEach(id => {
+                const btn = document.getElementById(`tab-${id}`);
+                if (id === tabId) {
+                    btn.className = 'tab-btn px-4 py-2 text-sm font-semibold rounded-lg bg-white text-indigo-600 shadow-sm transition-all';
+                } else {
+                    btn.className = 'tab-btn px-4 py-2 text-sm font-semibold rounded-lg text-slate-600 hover:text-slate-900 transition-all';
+                }
+                // Hide/Show sections
+                document.getElementById(`sec-${id}`).classList.add('hidden');
+            });
+            
+            const targetSec = document.getElementById(`sec-${tabId}`);
+            targetSec.classList.remove('hidden');
+            // re-trigger animation
+            targetSec.classList.remove('fade-in');
+            void targetSec.offsetWidth;
+            targetSec.classList.add('fade-in');
+        }
+
+        // Render Job Cards for Explore Tab
+        function renderCards() {
+            const container = document.getElementById('job-cards-container');
+            container.innerHTML = '';
+
+            jobs.forEach(job => {
+                const card = document.createElement('div');
+                card.className = 'bg-white rounded-2xl p-6 shadow-sm border border-slate-100 hover:shadow-lg hover:border-indigo-100 transition-all cursor-pointer group flex flex-col h-full';
+                card.onclick = () => openModal(job.id);
+
+                card.innerHTML = `
+                    <div class="w-14 h-14 rounded-xl bg-${job.color}-50 flex items-center justify-center text-${job.color}-600 text-2xl mb-4 group-hover:scale-110 transition-transform">
+                        <i class="fa-solid ${job.icon}"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-900 mb-2">${job.name}</h3>
+                    <p class="text-sm text-slate-500 mb-6 flex-grow leading-relaxed">${job.desc}</p>
+                    <div class="mt-auto flex items-center text-sm font-semibold text-${job.color}-600 opacity-80 group-hover:opacity-100 transition-opacity">
+                        상세 정보 보기 <i class="fa-solid fa-arrow-right ml-1 text-xs"></i>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // Modal Logic
+        function openModal(jobId) {
+            const job = jobs.find(j => j.id === jobId);
+            if (!job) return;
+
+            // Setup Header
+            document.getElementById('modal-header-bg').className = `h-32 bg-gradient-to-r ${job.gradient} flex items-center px-8`;
+            const iconEl = document.getElementById('modal-icon');
+            iconEl.className = `w-16 h-16 bg-white rounded-2xl flex items-center justify-center text-3xl shadow-md text-${job.color}-500`;
+            iconEl.innerHTML = `<i class="fa-solid ${job.icon}"></i>`;
+            document.getElementById('modal-title').textContent = job.name;
+            document.getElementById('modal-subtitle').textContent = job.desc;
+
+            // Tasks
+            const tasksHtml = job.tasks.map(t => `<li class="flex items-start text-sm text-slate-700 gap-2"><i class="fa-solid fa-check text-indigo-400 mt-1"></i> <span>${t}</span></li>`).join('');
+            document.getElementById('modal-tasks').innerHTML = `<ul>${tasksHtml}</ul>`;
+            document.getElementById('modal-example').textContent = job.example;
+
+            // Education
+            // 전공 뱃지를 클릭 가능한 버튼으로 변경
+            const majorsHtml = job.majors.map(m => 
+                `<button onclick="showUniversities('${m}')" class="px-3 py-1 bg-slate-100 hover:bg-indigo-100 hover:text-indigo-700 text-slate-700 text-xs rounded-full font-medium border border-slate-200 hover:border-indigo-300 transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-indigo-200">${m}</button>`
+            ).join('');
+            document.getElementById('modal-majors').innerHTML = majorsHtml;
+            const elecHtml = job.electives.map(e => `<span class="px-3 py-1 bg-indigo-50 text-indigo-700 text-xs rounded-full font-medium border border-indigo-100">${e}</span>`).join('');
+            document.getElementById('modal-electives').innerHTML = elecHtml;
+
+            // 모달 열 때 대학 추천 컨테이너 숨기기
+            document.getElementById('uni-recommendation-container').classList.add('hidden');
+
+            // Competencies
+            const compHtml = job.competencies.map(c => `
+                <li class="flex items-start gap-3 bg-slate-50 p-3 rounded-xl">
+                    <div class="w-8 h-8 rounded-full bg-white shadow-sm flex items-center justify-center text-indigo-500 shrink-0 mt-0.5"><i class="fa-solid fa-bolt"></i></div>
+                    <div>
+                        <span class="text-sm font-bold text-slate-800 block mb-1">${c.title}</span>
+                        <span class="text-xs text-slate-600 leading-relaxed">${c.desc}</span>
+                    </div>
+                </li>
+            `).join('');
+            document.getElementById('modal-competencies').innerHTML = compHtml;
+
+            // Projects
+            const projHtml = job.projects.map((p, idx) => `
+                <div class="flex items-start gap-3 p-3 bg-white/10 rounded-xl">
+                    <span class="w-6 h-6 rounded-full bg-indigo-500/50 flex items-center justify-center text-xs font-bold shrink-0">${idx+1}</span>
+                    <span class="text-sm text-indigo-50 leading-relaxed pt-0.5">${p}</span>
+                </div>
+            `).join('');
+            document.getElementById('modal-projects').innerHTML = projHtml;
+
+            // Show Modal
+            document.getElementById('job-modal').classList.remove('hidden');
+            // lock body scroll
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            document.getElementById('job-modal').classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        }
+
+        // 대학 추천 표시 로직
+        function showUniversities(major) {
+            const container = document.getElementById('uni-recommendation-container');
+            const titleEl = document.getElementById('uni-recommendation-title');
+            const listEl = document.getElementById('uni-recommendation-list');
+            
+            const unis = uniRecommendations[major];
+            
+            if (unis) {
+                titleEl.textContent = `${major} 추천 대학 (서울 소재)`;
+                listEl.textContent = unis.join(', ') + ' 등';
+                
+                container.classList.remove('hidden');
+                // 재클릭시 애니메이션 트리거
+                container.classList.remove('fade-in');
+                void container.offsetWidth; 
+                container.classList.add('fade-in');
+            } else {
+                container.classList.add('hidden');
+            }
+        }
+
+        // Setup Select Dropdowns
+        function populateSelects() {
+            const selects = [document.getElementById('compare-1'), document.getElementById('compare-2'), document.getElementById('roadmap-select')];
+            
+            jobs.forEach(job => {
+                selects.forEach(select => {
+                    const option = document.createElement('option');
+                    option.value = job.id;
+                    option.textContent = job.name;
+                    select.appendChild(option);
+                });
+            });
+        }
+
+        // Compare Logic
+        function renderComparison() {
+            const id1 = document.getElementById('compare-1').value;
+            const id2 = document.getElementById('compare-2').value;
+            const resultDiv = document.getElementById('comparison-result');
+            const detailsDiv = document.getElementById('comparison-details');
+
+            if (!id1 || !id2) {
+                resultDiv.classList.add('hidden');
+                return;
+            }
+
+            const job1 = jobs.find(j => j.id === id1);
+            const job2 = jobs.find(j => j.id === id2);
+
+            resultDiv.classList.remove('hidden');
+            resultDiv.classList.remove('fade-in');
+            void resultDiv.offsetWidth;
+            resultDiv.classList.add('fade-in');
+
+            detailsDiv.innerHTML = `
+                ${createCompareCard(job1)}
+                ${createCompareCard(job2)}
+            `;
+            
+            // 시각화 렌더링 호출
+            renderVisualization(job1, job2);
+        }
+
+        function renderVisualization(job1, job2) {
+            const chartDiv = document.getElementById('comparison-chart');
+            const statLabels = {
+                global: '글로벌 감각 및 이해',
+                planning: '프로젝트 기획 및 추진력',
+                comm: '공감 및 커뮤니케이션',
+                analysis: '문제 분석 및 연구력',
+                creative: '창의성 및 실행력'
+            };
+
+            let html = `
+                <h3 class="text-lg font-bold text-slate-800 mb-6 flex items-center gap-2">
+                    <i class="fa-solid fa-chart-column text-indigo-500"></i> 필요 핵심 역량 지수 비교 
+                    <span class="text-xs font-normal text-slate-400 ml-1">(참고용 가상 지표)</span>
+                </h3>
+                <div class="space-y-6">
+            `;
+
+            for (const key in statLabels) {
+                const val1 = job1.stats[key];
+                const val2 = job2.stats[key];
+                
+                html += `
+                    <div>
+                        <div class="text-sm font-bold text-slate-700 mb-3">${statLabels[key]}</div>
+                        <div class="space-y-2.5">
+                            <!-- Job 1 Bar -->
+                            <div class="flex items-center gap-3">
+                                <div class="w-28 text-xs text-slate-500 text-right truncate" title="${job1.name}">${job1.name}</div>
+                                <div class="flex-1 bg-slate-100 rounded-full h-3 overflow-hidden">
+                                    <div class="bg-${job1.color}-500 h-3 rounded-full transition-all duration-1000 ease-out" style="width: ${val1}%"></div>
+                                </div>
+                                <div class="w-8 text-xs font-bold text-${job1.color}-600">${val1}</div>
+                            </div>
+                            <!-- Job 2 Bar -->
+                            <div class="flex items-center gap-3">
+                                <div class="w-28 text-xs text-slate-500 text-right truncate" title="${job2.name}">${job2.name}</div>
+                                <div class="flex-1 bg-slate-100 rounded-full h-3 overflow-hidden">
+                                    <div class="bg-${job2.color}-500 h-3 rounded-full transition-all duration-1000 ease-out" style="width: ${val2}%"></div>
+                                </div>
+                                <div class="w-8 text-xs font-bold text-${job2.color}-600">${val2}</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+            html += `</div>`;
+            chartDiv.innerHTML = html;
+        }
+
+        function createCompareCard(job) {
+            return `
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden relative">
+                    <div class="h-2 bg-${job.color}-500 w-full absolute top-0"></div>
+                    <div class="p-6">
+                        <div class="flex items-center gap-3 mb-6">
+                            <div class="w-12 h-12 rounded-full bg-${job.color}-50 flex items-center justify-center text-${job.color}-600 text-xl"><i class="fa-solid ${job.icon}"></i></div>
+                            <h4 class="text-lg font-bold text-slate-900">${job.name}</h4>
+                        </div>
+                        
+                        <div class="space-y-5">
+                            <div>
+                                <h5 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">핵심 직무 차별점</h5>
+                                <ul class="space-y-2">
+                                    ${job.tasks.map(t => `<li class="text-sm text-slate-700 flex items-start gap-2"><span class="text-${job.color}-500 mt-0.5">•</span> <span>${t}</span></li>`).join('')}
+                                </ul>
+                            </div>
+                            <div class="pt-4 border-t border-slate-100">
+                                <h5 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">필요 핵심 역량</h5>
+                                <ul class="space-y-2">
+                                    ${job.competencies.map(c => `
+                                        <li class="bg-slate-50 p-3 rounded-lg border border-slate-100">
+                                            <div class="text-sm font-bold text-slate-800 mb-1">${c.title}</div>
+                                            <div class="text-xs text-slate-500 font-normal leading-relaxed">${c.desc}</div>
+                                        </li>
+                                    `).join('')}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Roadmap Logic
+        function renderRoadmap() {
+            const id = document.getElementById('roadmap-select').value;
+            const contentDiv = document.getElementById('roadmap-content');
+            
+            if (!id) {
+                contentDiv.classList.add('hidden');
+                return;
+            }
+
+            const job = jobs.find(j => j.id === id);
+            
+            let timelineHtml = '<div class="timeline-line absolute"></div><div class="flex flex-col gap-8 relative z-10">';
+            
+            job.roadmap.forEach((stage, idx) => {
+                const isEven = idx % 2 !== 0;
+                timelineHtml += `
+                    <div class="timeline-item flex flex-col md:flex-row items-start md:items-center w-full group">
+                        <div class="timeline-content w-full md:w-1/2 p-4 md:p-0">
+                            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 group-hover:border-${job.color}-300 group-hover:shadow-md transition-all">
+                                <span class="text-xs font-bold text-${job.color}-600 bg-${job.color}-50 px-2 py-1 rounded-md mb-2 inline-block">${stage.step}</span>
+                                <h4 class="text-lg font-bold text-slate-900 mb-2">${stage.title}</h4>
+                                <p class="text-sm text-slate-600 leading-relaxed">${stage.desc}</p>
+                            </div>
+                        </div>
+                        <div class="absolute left-6 md:left-1/2 w-10 h-10 bg-${job.color}-500 rounded-full border-4 border-white shadow-sm flex items-center justify-center text-white transform -translate-x-1/2 md:translate-x-[-50%] mt-4 md:mt-0 z-10 transition-transform group-hover:scale-110">
+                            <i class="fa-solid ${stage.icon} text-sm"></i>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            timelineHtml += '</div>';
+
+            contentDiv.innerHTML = timelineHtml;
+            contentDiv.classList.remove('hidden');
+            contentDiv.classList.remove('fade-in');
+            void contentDiv.offsetWidth;
+            contentDiv.classList.add('fade-in');
+        }
+    </script>
+</body>
+</html>
